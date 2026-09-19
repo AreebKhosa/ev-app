@@ -1,26 +1,171 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark, .dark *));
+
+@theme {
+  --color-bg-base: var(--color-bg-base);
+  --color-bg-panel: var(--color-bg-panel);
+  --color-bg-panel-hover: var(--color-bg-panel-hover);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-volt-cyan: var(--color-volt-cyan);
+  --color-volt-purple: var(--color-volt-purple);
+  --color-volt-pink: var(--color-volt-pink);
+  --color-volt-accent: var(--color-volt-accent);
+  --color-btn-dark: var(--color-btn-dark);
+  --color-btn-dark-text: var(--color-btn-dark-text);
+  --color-hairline: var(--color-hairline);
+  --color-hairline-bright: var(--color-hairline-bright);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  /* Light Mode Colors */
+  --color-bg-base: #E4E5E8;
+  --color-bg-studio-grad: radial-gradient(ellipse at 50% 35%, #F0F1F4 0%, #DCDEE2 100%);
+  --color-bg-panel: #F5F6F8;
+  --color-bg-panel-hover: #ECEEF2;
+  --color-bg-glass: rgba(255, 255, 255, 0.85);
+  --color-text-primary: #111215;
+  --color-text-secondary: #4B4E55;
+  --color-text-muted: #7E828C;
+  --color-hairline: rgba(0, 0, 0, 0.09);
+  --color-hairline-bright: rgba(0, 0, 0, 0.20);
+
+  /* Acid Neon Colors */
+  --color-volt-cyan: #D4FF00;
+  --color-volt-purple: #7B61FF;
+  --color-volt-pink: #FF2D95;
+  --color-volt-accent: #D4FF00;
+  --color-btn-dark: #0E0F12;
+  --color-btn-dark-text: #FFFFFF;
+
+  --glow-opacity: 0.25;
+  --glow-blur: 90px;
+  --glow-secondary-opacity: 0.15;
+  --grain-opacity: 0.02;
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07);
+  --text-glow: none;
+  --hero-huge-text-color: #FFFFFF;
+  --hero-huge-text-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  color-scheme: dark;
+  /* Dark Mode Colors */
+  --color-bg-base: #0A0A0D;
+  --color-bg-studio-grad: radial-gradient(ellipse at 50% 35%, #181920 0%, #08080A 100%);
+  --color-bg-panel: #141418;
+  --color-bg-panel-hover: #1D1E24;
+  --color-bg-glass: rgba(20, 20, 25, 0.75);
+  --color-text-primary: #F5F5F7;
+  --color-text-secondary: rgba(245, 245, 247, 0.68);
+  --color-text-muted: rgba(245, 245, 247, 0.42);
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-hairline-bright: rgba(255, 255, 255, 0.22);
+
+  --color-volt-cyan: #D4FF00;
+  --color-volt-purple: #7B61FF;
+  --color-volt-pink: #FF2D95;
+  --color-volt-accent: #D4FF00;
+  --color-btn-dark: #FFFFFF;
+  --color-btn-dark-text: #0A0A0D;
+
+  --glow-opacity: 0.55;
+  --glow-blur: 120px;
+  --glow-secondary-opacity: 0.35;
+  --grain-opacity: 0.04;
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.16);
+  --glass-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.75);
+  --text-glow: 0 0 35px rgba(212, 255, 0, 0.3);
+  --hero-huge-text-color: rgba(255, 255, 255, 0.08);
+  --hero-huge-text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Smooth background/color transition */
+html {
+  transition: background-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Background Huge Text */
+.hero-huge-headline {
+  color: var(--hero-huge-text-color);
+  text-shadow: var(--hero-huge-text-shadow);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Gradient Text Effect */
+.volt-gradient-text {
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-volt-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background-color: var(--color-bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inner-highlight), var(--glass-shadow);
+}
+
+/* Background Grain Noise Texture */
+/* .noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  content: "";
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+} */
+.noise-overlay {
+  display: none;
+  /* Ya isko halka static rakhein */
+}
+
+/* Focus Highlights */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-volt-accent);
+  outline-offset: 3px;
+}
+
+/* Slow Spin Animations */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 30s linear infinite;
 }
