@@ -1,23 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
-import { Check, Landmark, ShieldCheck } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Check, Landmark, ShieldCheck, Loader2 } from "lucide-react";
 import { BankDetails } from "@/types/admin";
 
 interface AdminBankingProps {
   bankDetails: BankDetails;
-  onSaveBank: (details: BankDetails) => void;
+  onSaveBank: (details: BankDetails) => Promise<void> | void;
 }
 
 export function AdminBanking({ bankDetails, onSaveBank }: AdminBankingProps) {
   const [formData, setFormData] = useState<BankDetails>(bankDetails);
+  const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (bankDetails) {
+      setFormData(bankDetails);
+    }
+  }, [bankDetails]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSaveBank(formData);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setIsSaving(true);
+    try {
+      await onSaveBank(formData);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error("Failed to save bank details:", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -129,16 +143,22 @@ export function AdminBanking({ bankDetails, onSaveBank }: AdminBankingProps) {
 
             <button
               type="submit"
+              disabled={isSaving}
               className={`px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-md ${
                 saved
                   ? "bg-[#D4FF00] text-black"
                   : "bg-neutral-950 text-white dark:bg-white dark:text-black hover:bg-[#D4FF00] hover:text-black"
               }`}
             >
-              {saved ? (
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Updating Settlement...</span>
+                </>
+              ) : saved ? (
                 <>
                   <Check className="w-4 h-4" />
-                  <span>Settlement Config Saved</span>
+                  <span>Settlement Config Saved!</span>
                 </>
               ) : (
                 <span>Save Banking Details</span>

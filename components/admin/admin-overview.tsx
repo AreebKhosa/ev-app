@@ -26,7 +26,7 @@ export function AdminOverview({
   const stats = [
     { label: "Gross Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: <DollarSign className="w-5 h-5 text-[#D4FF00]" />, change: "+18.4% vs last month" },
     { label: "Active Orders", value: activeOrders, icon: <ShoppingBag className="w-5 h-5 text-[#D4FF00]" />, change: `${orders.length} total orders` },
-    { label: "Registered Riders", value: users.length, icon: <Users className="w-5 h-5 text-[#D4FF00]" />, change: "100% active standing" },
+    { label: "Registered Customers", value: users.length, icon: <Users className="w-5 h-5 text-[#D4FF00]" />, change: "100% active standing" },
     { label: "Open Inquiries", value: pendingQueries, icon: <MessageSquare className="w-5 h-5 text-[#D4FF00]" />, change: `${queries.length} total received` },
   ];
 
@@ -72,25 +72,29 @@ export function AdminOverview({
           </div>
 
           <div className="space-y-2.5">
-            {orders.slice(0, 3).map((o) => (
-              <div
-                key={o.id}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
-              >
-                <div>
-                  <h4 className="text-xs font-bold text-neutral-900 dark:text-white">{o.customerName}</h4>
-                  <p className="text-[10px] font-mono text-neutral-500">{o.product} • {o.id}</p>
+            {orders.length === 0 ? (
+              <p className="text-xs text-neutral-500 py-6 text-center font-mono">No customer orders dispatched yet.</p>
+            ) : (
+              orders.slice(0, 3).map((o) => (
+                <div
+                  key={o.id}
+                  className="flex items-center justify-between p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
+                >
+                  <div>
+                    <h4 className="text-xs font-bold text-neutral-900 dark:text-white">{o.customerName}</h4>
+                    <p className="text-[10px] font-mono text-neutral-500">{o.product} • {o.id}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs font-black text-neutral-900 dark:text-white block tabular-nums">
+                      ${o.total.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] font-mono font-bold text-[#92b500] dark:text-[#D4FF00]">
+                      {o.status}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs font-black text-neutral-900 dark:text-white block tabular-nums">
-                    ${o.total.toLocaleString()}
-                  </span>
-                  <span className="text-[10px] font-mono font-bold text-[#92b500] dark:text-[#D4FF00]">
-                    {o.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -110,20 +114,24 @@ export function AdminOverview({
           </div>
 
           <div className="space-y-2.5">
-            {products.slice(0, 3).map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
-              >
-                <div>
-                  <h4 className="text-xs font-bold text-neutral-900 dark:text-white">{p.name}</h4>
-                  <p className="text-[10px] font-mono text-neutral-500">{p.category} • {p.stock} in stock</p>
+            {products.length === 0 ? (
+              <p className="text-xs text-neutral-500 py-6 text-center font-mono">No products in inventory yet.</p>
+            ) : (
+              products.slice(0, 3).map((p) => (
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
+                >
+                  <div>
+                    <h4 className="text-xs font-bold text-neutral-900 dark:text-white">{p.name}</h4>
+                    <p className="text-[10px] font-mono text-neutral-500">{p.category} • {p.stock} in stock</p>
+                  </div>
+                  <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">
+                    ${p.price.toLocaleString()}
+                  </span>
                 </div>
-                <span className="text-xs font-black text-neutral-900 dark:text-white tabular-nums">
-                  ${p.price.toLocaleString()}
-                </span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

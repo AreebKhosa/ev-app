@@ -19,6 +19,7 @@ export function TestimonialsSection() {
 
   return (
     <section
+      id="reviews"
       ref={containerRef}
       className="py-28 w-full overflow-hidden relative z-20"
     >

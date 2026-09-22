@@ -4,9 +4,10 @@ export interface User {
   handle?: string;
   email: string;
   avatar?: string;
-  role: "rider" | "admin";
+  role: "user" | "customer" | "admin" | "USER" | "ADMIN" | string;
   phone?: string;
   tier?: string;
+  shippingAddress?: string;
   memberSince: string;
   joined?: string;
   stats?: {
@@ -17,7 +18,7 @@ export interface User {
   };
 }
 
-export interface RiderTelemetry {
+export interface UserTelemetry {
   totalDistanceKm: number;
   topSpeedKmH: number;
   batteryHealthPct: number;
@@ -48,12 +49,12 @@ export interface ProfileOrder {
   total: number;
   status: string;
   trackingNo: string;
-  itemsCount: number;
+  itemsCount?: number;
 }
 
-export interface RiderProfile {
+export interface UserProfile {
   user: User;
-  telemetry: RiderTelemetry;
+  telemetry?: UserTelemetry;
   assignedBikeId?: string;
   connectedBikeModel?: string;
 }

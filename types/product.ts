@@ -5,6 +5,26 @@ export interface ProductColor {
   image?: string;
 }
 
+export interface BatteryVariant {
+  id?: string;
+  name: string;
+  range: string;
+  extraPrice: number;
+}
+
+export interface SpecificationItem {
+  label: string;
+  value: string;
+  icon?: string;
+}
+
+export interface WarrantyAndShipping {
+  warranty?: string;
+  trialPeriod?: string;
+  shipping?: string;
+  dispatchTime?: string;
+}
+
 export interface ProductSpecs {
   speed: string;
   range: string;
@@ -29,12 +49,16 @@ export interface ProductAngle {
 export interface ProductItem {
   id: string;
   name: string;
-  category: "urban" | "off-road" | "performance";
-  categoryLabel: string;
+  modelCode?: string;
+  category: string;
+  categoryLabel?: string;
   badge?: string;
   price: number;
   originalPrice?: number;
+  stock?: number;
   image: string;
+  gallery?: string[];
+  description?: string;
   specs: ProductSpecs;
   colors: ProductColor[];
 }
@@ -43,20 +67,35 @@ export interface Product {
   id: string;
   name: string;
   modelCode?: string;
-  category: "urban" | "off-road" | "performance";
-  categoryLabel: string;
+  category: string;
+  categoryLabel?: string;
   badge?: string;
   price: number;
   originalPrice?: number;
+  stock?: number;
+  speed?: string;
+  speedKm?: number;
+  range?: string;
+  rangeKm?: number;
+  power?: string;
+  motorPower?: string;
+  shortDescription?: string;
+  shortDesc?: string;
+  description?: string;
+  image: string;
+  gallery?: string[];
+  videoUrl?: string;
+  colors?: ProductColor[];
+  batteryVariants?: BatteryVariant[];
+  features?: string[];
+  specifications?: SpecificationItem[];
+  whatsInTheBox?: string[];
+  warrantyAndShipping?: WarrantyAndShipping;
+  specs?: ProductSpecs | ProductSpecDetail[];
+  angles?: ProductAngle[];
   rating?: number;
   reviewsCount?: number;
-  shortDesc?: string;
-  image: string;
-  motorPower?: string;
-  rangeKm?: number;
-  speedKm?: number;
-  specs?: ProductSpecs | ProductSpecDetail[];
-  colors: (ProductColor | { id: string; name: string; hex: string })[];
-  features?: string[];
-  angles?: ProductAngle[];
+  createdAt?: string;
+  updatedAt?: string;
 }
+

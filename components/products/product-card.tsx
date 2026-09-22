@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ShoppingBag, Heart, Gauge, BatteryCharging, Zap, ArrowUpRight, Check } from "lucide-react";
 import { ProductItem } from "@/types/product";
+import { useCart } from "@/context/cart-context";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 export function ProductCard({
   product,
@@ -14,14 +16,37 @@ export function ProductCard({
   product: ProductItem;
   onAddToCart?: (product: ProductItem, color: string) => void;
 }) {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const { addToCart } = useCart();
+  const defaultColors =
+    product.colors && product.colors.length > 0
+      ? product.colors
+      : [{ id: "volt", name: "Acid Lime", hex: "#D4FF00", image: "" }];
+
+  const [selectedColor, setSelectedColor] = useState(defaultColors[0]);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+
+  const displayImage = getOptimizedImageUrl(
+    selectedColor?.image || product.image || (product.gallery && product.gallery[0])
+  );
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsAdded(true);
-    onAddToCart?.(product, selectedColor.name);
+    if (onAddToCart) {
+      onAddToCart(product, selectedColor?.name || "Standard");
+    } else {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        category: product.categoryLabel || "Electric Fleet",
+        price: product.price,
+        colorName: selectedColor?.name || "Standard",
+        colorHex: selectedColor?.hex || "#D4FF00",
+        image: displayImage,
+        quantity: 1,
+      });
+    }
     setTimeout(() => setIsAdded(false), 1800);
   };
 
@@ -44,7 +69,7 @@ export function ProductCard({
           </span>
         ) : (
           <span className="text-[10px] font-mono font-medium tracking-wider uppercase px-2.5 py-1 rounded-full bg-black/5 dark:bg-white/10 text-neutral-500">
-            {product.categoryLabel}
+            {product.categoryLabel || product.category || "Electric Fleet"}
           </span>
         )}
 
@@ -74,37 +99,40 @@ export function ProductCard({
         <div className="absolute inset-0 bg-[#D4FF00]/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         <Image
-          src={product.image}
+          src={displayImage}
           alt={product.name}
           fill
+          unoptimized
           className="object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.2)] group-hover:scale-108 transition-transform duration-500 ease-out"
         />
       </Link>
 
       {/* Color Variants Selector */}
-      <div className="flex items-center justify-between pt-2 pb-1 border-t border-black/5 dark:border-white/10 z-10">
-        <span className="text-[11px] font-mono text-neutral-500">
-          Color: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{selectedColor.name}</span>
-        </span>
-        <div className="flex items-center gap-1.5">
-          {product.colors.map((c, i) => (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedColor(c);
-              }}
-              style={{ backgroundColor: c.hex }}
-              className={`w-3.5 h-3.5 rounded-full transition-all duration-200 cursor-pointer ${
-                selectedColor.hex === c.hex
-                  ? "ring-2 ring-black dark:ring-[#D4FF00] scale-125"
-                  : "opacity-75 hover:opacity-100"
-              }`}
-              title={c.name}
-            />
-          ))}
+      {defaultColors.length > 0 && (
+        <div className="flex items-center justify-between pt-2 pb-1 border-t border-black/5 dark:border-white/10 z-10">
+          <span className="text-[11px] font-mono text-neutral-500">
+            Color: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{selectedColor?.name}</span>
+          </span>
+          <div className="flex items-center gap-1.5">
+            {defaultColors.map((c, i) => (
+              <button
+                key={c.id || i}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedColor(c);
+                }}
+                style={{ backgroundColor: c.hex }}
+                className={`w-3.5 h-3.5 rounded-full transition-all duration-200 cursor-pointer ${
+                  selectedColor?.hex === c.hex
+                    ? "ring-2 ring-black dark:ring-[#D4FF00] scale-125"
+                    : "opacity-75 hover:opacity-100"
+                }`}
+                title={c.name}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Product Name & Price */}
       <div className="py-2 z-10">
@@ -134,7 +162,7 @@ export function ProductCard({
             <span>Speed</span>
           </div>
           <span className="text-[11px] font-bold text-neutral-900 dark:text-white mt-0.5 tabular-nums">
-            {product.specs.speed}
+            {product.specs?.speed || "45 km/h"}
           </span>
         </div>
 
@@ -144,7 +172,7 @@ export function ProductCard({
             <span>Range</span>
           </div>
           <span className="text-[11px] font-bold text-neutral-900 dark:text-white mt-0.5 tabular-nums">
-            {product.specs.range}
+            {product.specs?.range || "85 km"}
           </span>
         </div>
 
@@ -154,7 +182,7 @@ export function ProductCard({
             <span>Power</span>
           </div>
           <span className="text-[11px] font-bold text-neutral-900 dark:text-white mt-0.5 tabular-nums">
-            {product.specs.power}
+            {product.specs?.power || "750W"}
           </span>
         </div>
       </div>
