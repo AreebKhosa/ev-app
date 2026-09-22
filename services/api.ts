@@ -3,8 +3,8 @@
  * Connects Next.js Frontend with Express + PostgreSQL + Prisma Backend
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-// const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://ev-backend-ecru.vercel.app/api";
+// const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://ev-backend-ecru.vercel.app/api";
 
 // Helper to get stored auth token
 export const getAuthToken = (endpoint?: string): string | null => {
