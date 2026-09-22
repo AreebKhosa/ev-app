@@ -67,7 +67,7 @@ function AuthForm() {
             if (isLogin) {
                 // 1. Login user
                 const res = await api.auth.login({
-                    email: formData.email,
+                    email: formData.email.trim(),
                     password: formData.password,
                 });
 
@@ -79,29 +79,13 @@ function AuthForm() {
                         router.push(redirectUrl);
                     }, 800);
                 } else {
-                    // Fallback
-                    if (formData.email && formData.password.length >= 6) {
-                        const userObj = {
-                            id: "usr-" + Date.now(),
-                            name: formData.email.split("@")[0],
-                            email: formData.email,
-                            tier: "Apex Hyper-Rider",
-                            role: "USER",
-                            shippingAddress: "540 Mission St, Apt 4B, San Francisco, CA 94105",
-                        };
-                        localStorage.setItem("volt_auth_token", "rider_token_" + Date.now());
-                        localStorage.setItem("volt_user", JSON.stringify(userObj));
-                        setIsSuccess(true);
-                        setTimeout(() => router.push(redirectUrl), 800);
-                    } else {
-                        setErrorMessage(res.error || "Invalid email or password. Please try again.");
-                    }
+                    setErrorMessage(res.error || "Invalid email or password. Please verify your credentials.");
                 }
             } else {
                 // 2. Register user
                 const res = await api.auth.register({
-                    name: formData.name,
-                    email: formData.email,
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
                     password: formData.password,
                 });
 
@@ -113,18 +97,7 @@ function AuthForm() {
                         router.push(redirectUrl);
                     }, 800);
                 } else {
-                    // Fallback
-                    const userObj = {
-                        id: "usr-" + Date.now(),
-                        name: formData.name || "Volt Rider",
-                        email: formData.email,
-                        tier: "Apex Hyper-Rider",
-                        role: "USER",
-                    };
-                    localStorage.setItem("volt_auth_token", "rider_token_" + Date.now());
-                    localStorage.setItem("volt_user", JSON.stringify(userObj));
-                    setIsSuccess(true);
-                    setTimeout(() => router.push(redirectUrl), 800);
+                    setErrorMessage(res.error || "Failed to create account. Please check your details.");
                 }
             }
         } catch (err: any) {

@@ -24,11 +24,11 @@ export default function AdminLoginPage() {
 
         try {
             // Check via backend API
-            const res = await api.auth.login({ email, password });
+            const res = await api.auth.login({ email: email.trim(), password });
 
             if (res.data?.token) {
-                if (res.data.user.role !== "ADMIN" && !email.includes("admin")) {
-                    setError("Access restricted. This portal requires verified Administrator clearance.");
+                if (res.data.user.role !== "ADMIN") {
+                    setError("Access restricted. This account does not have Administrator clearance.");
                     setLoading(false);
                     return;
                 }
@@ -36,27 +36,9 @@ export default function AdminLoginPage() {
                 localStorage.setItem("volt_admin_token", res.data.token);
                 localStorage.setItem("volt_admin_user", JSON.stringify(res.data.user));
                 setSuccess(true);
-                setTimeout(() => router.push("/admin"), 1000);
+                setTimeout(() => router.push("/admin"), 800);
             } else {
-                // Fallback check
-                if (
-                    (email === "admin@voltstudio.com" && password === "admin123") ||
-                    (email.includes("admin") && password.length >= 6)
-                ) {
-                    const adminUser = {
-                        id: "admin-master-01",
-                        name: "Chief Operations Director",
-                        email,
-                        role: "ADMIN",
-                        tier: "Executive Master",
-                    };
-                    localStorage.setItem("volt_admin_token", "admin_jwt_session_2025");
-                    localStorage.setItem("volt_admin_user", JSON.stringify(adminUser));
-                    setSuccess(true);
-                    setTimeout(() => router.push("/admin"), 1000);
-                } else {
-                    setError(res.error || "Invalid administrator credentials. Please verify your email and password.");
-                }
+                setError(res.error || "Invalid administrator credentials. Please check your email and password.");
             }
         } catch (err: any) {
             setError(err.message || "Failed to authenticate administrator.");

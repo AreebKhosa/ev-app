@@ -76,34 +76,88 @@ export default function ProfilePage() {
           }));
 
           if (u.orders && u.orders.length > 0) {
-            const mappedOrders: ProfileOrder[] = u.orders.map((o: any) => ({
-              id: o.orderNumber || o.id,
-              product: o.items?.[0]?.name || "Volt Electric Fleet Vehicle",
-              date: new Date(o.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-              total: o.totalDue || 0,
-              status: o.status === "DELIVERED" ? "Delivered" : o.status === "IN_TRANSIT" ? "In Transit" : "Processing",
-              trackingNo: o.transactionRef || "VOLT-TRK-" + o.id.slice(0, 6).toUpperCase(),
-            }));
+            const mappedOrders: ProfileOrder[] = u.orders.map((o: any) => {
+              const statusDisplay =
+                o.status === "DELIVERED"
+                  ? "Delivered"
+                  : o.status === "IN_TRANSIT"
+                  ? "In Transit"
+                  : o.status === "ASSEMBLED"
+                  ? "Assembled"
+                  : o.status === "CANCELLED"
+                  ? "Cancelled"
+                  : "Processing";
+
+              const itemsTitle =
+                (o.items || [])
+                  .map((i: any) => `${i.name}${i.quantity > 1 ? ` (x${i.quantity})` : ""}`)
+                  .join(", ") || "Volt Electric Fleet Vehicle";
+
+              return {
+                id: o.orderNumber || o.id,
+                orderNumber: o.orderNumber,
+                product: itemsTitle,
+                date: new Date(o.createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }),
+                subtotal: o.subtotal || o.totalDue || 0,
+                discountAmount: o.discountAmount || 0,
+                tax: o.tax || 0,
+                total: o.totalDue || 0,
+                status: statusDisplay,
+                rawStatus: o.status,
+                trackingNo:
+                  o.transactionRef ||
+                  (o.orderNumber ? `TRK-${o.orderNumber}` : `VOLT-TRK-${String(o.id).slice(0, 6).toUpperCase()}`),
+                itemsCount: (o.items || []).reduce((acc: number, cur: any) => acc + (cur.quantity || 1), 0),
+                customerName: o.customerName || u.name,
+                customerEmail: o.customerEmail || u.email,
+                customerPhone: o.customerPhone || u.phone,
+                shippingAddress: o.shippingAddress || u.shippingAddress,
+                city: o.city,
+                postalCode: o.postalCode,
+                country: o.country,
+                senderAccountName: o.senderAccountName,
+                transactionRef: o.transactionRef,
+                receiptFileUrl: o.receiptFileUrl,
+                items: (o.items || []).map((it: any) => ({
+                  id: it.id,
+                  productId: it.productId,
+                  name: it.name,
+                  colorName: it.colorName,
+                  price: it.price,
+                  quantity: it.quantity,
+                  product: it.product || null,
+                })),
+              };
+            });
             setOrders(mappedOrders);
 
-            // Derive owned vehicles from fulfilled orders
+            // Derive owned vehicles from fulfilled or active orders
             const mappedVehicles: OwnedVehicle[] = u.orders
               .flatMap((o: any) => o.items || [])
               .map((item: any, idx: number) => ({
                 id: item.productId || `veh-${idx}`,
                 name: item.name,
-                modelCode: "VOLT-FLEET",
+                modelCode: item.product?.modelCode || "VOLT-FLEET",
                 vin: `VLT${Math.floor(10000000 + Math.random() * 90000000)}`,
                 colorName: item.colorName || "Acid Lime",
                 colorHex: "#D4FF00",
                 batteryLevel: 98,
-                rangeKm: 85,
+                rangeKm: parseInt(item.product?.range || "85") || 85,
                 firmware: "v4.2.0 (Active)",
                 isLocked: true,
                 lastLocation: u.shippingAddress ? u.shippingAddress.split(",")[0] : "Connected Garage",
-                image: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?q=80&w=600&auto=format&fit=crop",
+                image:
+                  item.product?.image ||
+                  "https://images.unsplash.com/photo-1571068316344-75bc76f77890?q=80&w=600&auto=format&fit=crop",
               }));
             setVehicles(mappedVehicles);
+          } else {
+            setOrders([]);
+            setVehicles([]);
           }
         }
       } catch (err) {

@@ -42,14 +42,48 @@ export interface OwnedVehicle {
   image: string;
 }
 
+export interface ProfileOrderItem {
+  id?: string;
+  productId?: string | null;
+  name: string;
+  colorName?: string;
+  price: number;
+  quantity: number;
+  product?: {
+    id?: string;
+    name?: string;
+    modelCode?: string;
+    image?: string;
+    speed?: string;
+    range?: string;
+    power?: string;
+  } | null;
+}
+
 export interface ProfileOrder {
   id: string;
+  orderNumber?: string;
   date: string;
   product: string;
+  subtotal?: number;
+  discountAmount?: number;
+  tax?: number;
   total: number;
   status: string;
+  rawStatus?: string;
   trackingNo: string;
   itemsCount?: number;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  shippingAddress?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  senderAccountName?: string;
+  transactionRef?: string;
+  receiptFileUrl?: string;
+  items?: ProfileOrderItem[];
 }
 
 export interface UserProfile {

@@ -110,6 +110,12 @@ export default function AdminDashboardPage() {
 
       // 3. Fetch Orders
       const ordRes = await api.orders.getAllAdmin();
+      if (ordRes.status === 401) {
+        localStorage.removeItem("volt_admin_token");
+        localStorage.removeItem("volt_admin_user");
+        router.push("/admin/login");
+        return;
+      }
       if (ordRes.data) {
         setOrders(
           ordRes.data.map((o: any) => ({
